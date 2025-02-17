@@ -7,7 +7,7 @@ pipeline {
         TASK_FAMILY = 'paralelatask'  
         CLUSTER_NAME = 'paralelacluster'  // Nombre del cluster en ECS
         CONTAINER_NAME = 'mi-contenedor'  // Nombre del contenedor en la tarea ECS
-        NEXUS_URL = 'http://localhost:8082'  // Si Nexus está en tu máquina local
+        NEXUS_URL = 'localhost:8082'  // Si Nexus está en tu máquina local
         NEXUS_REPO = 'docker-releases'
     }
 
