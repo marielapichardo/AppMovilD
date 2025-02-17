@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION = 'us-east-1'  // Cambia según la región donde esté ECS
-        ECR_REPO = 'public.ecr.aws/o8q1x1q3/mpm/appparalela'  // Repositorio de la imagen en AWS ECR
-        TASK_FAMILY = 'paralelatask'  // Nombre de la tarea en ECS
+        AWS_REGION = 'us-east-1'  
+        ECR_REPO = 'public.ecr.aws/o8q1x1q3/mpm/appparalela'  
+        TASK_FAMILY = 'paralelatask'  
         CLUSTER_NAME = 'paralelacluster'  // Nombre del cluster en ECS
         CONTAINER_NAME = 'mi-contenedor'  // Nombre del contenedor en la tarea ECS
         NEXUS_URL = 'http://localhost:8082'  // Si Nexus está en tu máquina local
@@ -29,7 +29,7 @@ pipeline {
                 }
             }
         }
-        
+
 
        stage('Pull & Push to AWS ECR') {
             steps {
