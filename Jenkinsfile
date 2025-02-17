@@ -22,11 +22,10 @@ pipeline {
             steps {
                 script {
                     bat """
-                    docker build -t %NEXUS_URL%/%NEXUS_REPO%/appparalela:latest .
-                    docker login -u admin -p admin123 %NEXUS_URL%
-                    docker push %NEXUS_URL%/%NEXUS_REPO%/appparalela:latest
+                    docker build -t ${NEXUS_URL}/${NEXUS_REPO}/appparalela:latest .
+                    docker login -u admin -p admin123 ${NEXUS_URL}
+                    docker push ${NEXUS_URL}/${NEXUS_REPO}/appparalela:latest
                     """
-
                 }
             }
         }
@@ -36,7 +35,7 @@ pipeline {
             steps {
                 script {
                     withAWS(credentials: 'aws-credenciales', region: "${AWS_REGION}") {
-                        sh """
+                        bat """
                         docker pull ${NEXUS_URL}/${NEXUS_REPO}/appparalela:latest
                         aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
                         docker tag ${NEXUS_URL}/${NEXUS_REPO}/appparalela:latest ${ECR_REPO}:latest
