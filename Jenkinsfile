@@ -7,7 +7,7 @@ pipeline {
         TASK_FAMILY = 'paralelatask'  
         CLUSTER_NAME = 'paralelacluster'  // Nombre del cluster en ECS
         CONTAINER_NAME = 'mi-contenedor'  // Nombre del contenedor en la tarea ECS
-        NEXUS_URL = 'localhost:8082'  // Si Nexus está en tu máquina local
+        NEXUS_URL = 'localhost:8083'  // Si Nexus está en tu máquina local
         NEXUS_REPO = 'docker-releases'
     }
 
@@ -23,7 +23,7 @@ pipeline {
                 script {
                     bat """
                     docker build -t ${NEXUS_URL}/${NEXUS_REPO}/appparalela:latest .
-                    docker login -u admin -p 5621024f-b101-4f2a-936b-78c261c7b3d3 ${NEXUS_URL}
+                    echo "5621024f-b101-4f2a-936b-78c261c7b3d3" | docker login -u admin --password-stdin ${NEXUS_URL}
                     docker push ${NEXUS_URL}/${NEXUS_REPO}/appparalela:latest
                     """
                 }
