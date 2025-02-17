@@ -21,11 +21,12 @@ pipeline {
        stage('Build & Push to Nexus') {
             steps {
                 script {
-                    sh """
-                    docker build -t ${NEXUS_URL}/${NEXUS_REPO}/appparalela:latest .
-                    docker login -u admin -p admin123 ${NEXUS_URL}
-                    docker push ${NEXUS_URL}/${NEXUS_REPO}/appparalela:latest
+                    bat """
+                    docker build -t %NEXUS_URL%/%NEXUS_REPO%/appparalela:latest .
+                    docker login -u admin -p admin123 %NEXUS_URL%
+                    docker push %NEXUS_URL%/%NEXUS_REPO%/appparalela:latest
                     """
+
                 }
             }
         }
