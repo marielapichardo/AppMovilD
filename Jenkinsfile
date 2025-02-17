@@ -23,7 +23,7 @@ pipeline {
                 script {
                     bat """
                     docker build -t ${NEXUS_URL}/${NEXUS_REPO}/appparalela:latest .
-                    docker login -u admin -p admin123 ${NEXUS_URL}
+                    docker login -u admin -p 5621024f-b101-4f2a-936b-78c261c7b3d3 ${NEXUS_URL}
                     docker push ${NEXUS_URL}/${NEXUS_REPO}/appparalela:latest
                     """
                 }
