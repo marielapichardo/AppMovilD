@@ -2,33 +2,49 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION = 'us-east-1'
-        ECR_REPO = '<831926602540>.dkr.ecr.us-east-1.amazonaws.com/<mpm/appparalela>'
-        TASK_FAMILY = 'paralelatask'
-        CLUSTER_NAME = 'paralelacluster'
+        AWS_REGION = 'us-east-1'  // Cambia según la región donde esté ECS
+        ECR_REPO = 'public.ecr.aws/o8q1x1q3/mpm/appparalela'  // Repositorio de la imagen en AWS ECR
+        TASK_FAMILY = 'paralelatask'  // Nombre de la tarea en ECS
+        CLUSTER_NAME = 'paralelacluster'  // Nombre del cluster en ECS
+        CONTAINER_NAME = 'mi-contenedor'  // Nombre del contenedor en la tarea ECS
+        NEXUS_URL = 'http://localhost:8082'  // Si Nexus está en tu máquina local
+        NEXUS_REPO = 'docker-releases'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/marielapichardo/AppMovilD.git'
+                git branch: 'develop', url: 'https://github.com/marielapichardo/AppMovilD.git'
+            }
+        }
+
+       stage('Build & Push to Nexus') {
+            steps {
+                script {
+                    sh """
+                    docker build -t ${NEXUS_URL}/${NEXUS_REPO}/appparalela:latest .
+                    docker login -u admin -p admin123 ${NEXUS_URL}
+                    docker push ${NEXUS_URL}/${NEXUS_REPO}/appparalela:latest
+                    """
+                }
             }
         }
         
-        stage('Build & Push Image') {
+
+       stage('Pull & Push to AWS ECR') {
             steps {
                 script {
                     withAWS(credentials: 'aws-credenciales', region: "${AWS_REGION}") {
                         sh """
+                        docker pull ${NEXUS_URL}/${NEXUS_REPO}/appparalela:latest
                         aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
-                        docker build -t ${ECR_REPO}:latest .
+                        docker tag ${NEXUS_URL}/${NEXUS_REPO}/appparalela:latest ${ECR_REPO}:latest
                         docker push ${ECR_REPO}:latest
                         """
                     }
                 }
             }
         }
-
         stage('Update ECS Task') {
             steps {
                 script {
