@@ -29,9 +29,9 @@ pipeline {
                steps {
                    script {
                        // Construir la imagen Docker
-                       sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                       bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                        // Etiquetar la imagen para el registro
-                       sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_REGISTRY}/${NEXUS_REPO}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                       bat "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_REGISTRY}/${NEXUS_REPO}/${DOCKER_IMAGE}:${DOCKER_TAG}"
                    }
                }
            }
@@ -40,8 +40,8 @@ pipeline {
                steps {
                    withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
                        script {
-                           sh "docker login ${DOCKER_REGISTRY} -u $NEXUS_USER -p $NEXUS_PASS"
-                           sh "docker push ${DOCKER_REGISTRY}/${NEXUS_REPO}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                           bat "docker login ${DOCKER_REGISTRY} -u $NEXUS_USER -p $NEXUS_PASS"
+                           bat "docker push ${DOCKER_REGISTRY}/${NEXUS_REPO}/${DOCKER_IMAGE}:${DOCKER_TAG}"
                        }
                    }
                }
@@ -87,10 +87,10 @@ pipeline {
                            writeFile file: 'taskdef.json', text: taskDefJson
 
                            // Registrar la nueva revisión de la definición de tarea
-                           sh "aws ecs register-task-definition --region ${AWS_REGION} --cli-input-json file://taskdef.json"
+                           bat "aws ecs register-task-definition --region ${AWS_REGION} --cli-input-json file://taskdef.json"
 
                            // Actualizar el servicio para forzar nueva implementación
-                           sh "aws ecs update-service --region ${AWS_REGION} --cluster ${ECS_CLUSTER} --service ${ECS_SERVICE} --force-new-deployment"
+                           bat "aws ecs update-service --region ${AWS_REGION} --cluster ${ECS_CLUSTER} --service ${ECS_SERVICE} --force-new-deployment"
                        }
                    }
                }
