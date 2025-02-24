@@ -4,7 +4,7 @@ pipeline {
     environment {
 
     // Variables de entorno para Nexus y AWS Fargate
-           DOCKER_REGISTRY = "10.0.0.8:8081"  // Por ejemplo, si usas Nexus, la IP/dominio de Nexus
+           DOCKER_REGISTRY = "localhost:8081"  // Por ejemplo, si usas Nexus, la IP/dominio de Nexus
            NEXUS_REPO      = "repositorio-nexus"
            DOCKER_IMAGE    = "api-paralela"
            DOCKER_TAG      = "latest"
@@ -37,15 +37,15 @@ pipeline {
            }
 
            stage('Push to Nexus') {
-               steps {
-                   withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-                       script {
-                           bat "docker login ${DOCKER_REGISTRY} -u $NEXUS_USER -p $NEXUS_PASS"
-                           bat "docker push ${DOCKER_REGISTRY}/${NEXUS_REPO}/${DOCKER_IMAGE}:${DOCKER_TAG}"
-                       }
-                   }
-               }
-           }
+                steps {
+                    withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+                        bat '''
+                            echo %NEXUS_PASS% | docker login %DOCKER_REGISTRY% -u %NEXUS_USER% --password-stdin
+                            docker push %DOCKER_REGISTRY%/repository/%NEXUS_REPO%/%DOCKER_IMAGE%:%DOCKER_TAG%
+                        '''
+                    }
+                }
+            }
 
            stage('Deploy to AWS Fargate') {
                steps {
