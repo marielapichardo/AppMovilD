@@ -31,7 +31,7 @@ pipeline {
                        // Construir la imagen Docker
                        bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                        // Etiquetar la imagen para el registro
-                       bat "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_REGISTRY}/${NEXUS_REPO}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                       //bat "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_REGISTRY}/${NEXUS_REPO}/${DOCKER_IMAGE}:${DOCKER_TAG}"
                    }
                }
            }
@@ -41,6 +41,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
                         bat '''
                             echo %NEXUS_PASS% | docker login %DOCKER_REGISTRY% -u %NEXUS_USER% --password-stdin
+                             docker tag %DOCKER_IMAGE%:%DOCKER_TAG% %DOCKER_REGISTRY%/repository/%NEXUS_REPO%/%DOCKER_IMAGE%:%DOCKER_TAG%
                             docker push %DOCKER_REGISTRY%/repository/%NEXUS_REPO%/%DOCKER_IMAGE%:%DOCKER_TAG%
                         '''
                     }
