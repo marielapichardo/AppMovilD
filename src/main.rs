@@ -59,11 +59,14 @@ async fn get_firebase_access_token(service_account_key: &ServiceAccountKey) -> R
     let header = Header::new(Algorithm::RS256);
     let encoding_key = EncodingKey::from_rsa_pem(service_account_key.private_key.as_bytes())?;
     let jwt = encode(&header, &claims, &encoding_key)?;
+    println!("JWT generado: {}", jwt);
+
 
     let client = Client::new();
     let params = [
         ("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer"),
         ("assertion", &jwt),
+
     ];
     let res = client.post(&service_account_key.token_uri)
         .form(&params)
@@ -114,7 +117,9 @@ async fn generate_report(req: web::Json<ReportRequest>) -> impl Responder {
         }
     };
 
-    let device_token = "cgVwMEikT0KJZzN-zIF0sb:APA91bE9NEXkilKjWTqrke1f0VnbxadFnU1DDQvM5EPeemFvSZA5IlrPTD5XC901n3dRHwdQs57sYBdhIduhjGNFB9oHIWavDsZvqYUJYCALX7IUagJxOxw"; // Reemplaza con el token real del dispositivo
+    let device_token = "eyRw4ciQT9mxJQnffEaOMO:APA91bG3QHZTwq_-AQnbOUT9M0sLR-M5VFzph6x4II49B0v3LVRODUqjgsvIqKeKPj34FIdSegD5915866s-MrSTP5yasmmpD3hMXSs2Me1fiNVwkyuSP6I";
+    
+    
 
     // Retrasar el envío de la notificación final 10 segundos
     sleep(Duration::from_secs(10)).await;
